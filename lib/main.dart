@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:qiita_viewer/qiita_viewer.dart';
 
 void main() {
   runApp(const MyApp());
@@ -112,6 +113,13 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
+            TextButton(
+                onPressed: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (context) => const QiitaView(),
+                      ),
+                    ),
+                child: const Text("Go to Page B"))
           ],
         ),
       ),
