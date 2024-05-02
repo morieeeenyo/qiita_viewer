@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:qiita_viewer/qiita_viewer.dart';
+import 'package:qiita_viewer/screens/search_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -12,27 +12,19 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Qiita Search', // titleを追加
       theme: ThemeData(
-        // This is the theme of your application.
-        //
-        // TRY THIS: Try running your application with "flutter run". You'll see
-        // the application has a purple toolbar. Then, without quitting the app,
-        // try changing the seedColor in the colorScheme below to Colors.green
-        // and then invoke "hot reload" (save your changes or press the "hot
-        // reload" button in a Flutter-supported IDE, or press "r" if you used
-        // the command line to start the app).
-        //
-        // Notice that the counter didn't reset back to zero; the application
-        // state is not lost during the reload. To reset the state, use hot
-        // restart instead.
-        //
-        // This works for code too, not just values: Most code changes can be
-        // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-        useMaterial3: true,
+        // themeを追加
+        primarySwatch: Colors.green,
+        fontFamily: 'Hiragino Sans',
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color(0xFF55C500),
+        ),
+        textTheme: Theme.of(context).textTheme.apply(
+              bodyColor: Colors.white,
+            ),
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const SearchScreen(),
     );
   }
 }
@@ -113,13 +105,6 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_counter',
               style: Theme.of(context).textTheme.headlineMedium,
             ),
-            TextButton(
-                onPressed: () => Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (context) => const QiitaView(),
-                      ),
-                    ),
-                child: const Text("Go to Page B"))
           ],
         ),
       ),
