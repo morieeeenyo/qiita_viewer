@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:qiita_viewer/screens/search_screen.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-void main() {
+Future<void> main() async {
+  // main関数をFutureに変更
+  await dotenv.load(fileName: '.env'); // .envファイルを読み込み
   runApp(const MyApp());
 }
 
