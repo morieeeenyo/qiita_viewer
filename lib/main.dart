@@ -1,19 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:qiita_viewer/controllers/progress_controller.dart';
 import 'package:qiita_viewer/screens/search_screen.dart';
+import 'package:qiita_viewer/widgets/loading.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 Future<void> main() async {
   // main関数をFutureに変更
   await dotenv.load(fileName: '.env'); // .envファイルを読み込み
-  runApp(const MyApp());
+  runApp(
+    const ProviderScope(
+      child: MyApp(),
+    ),
+  );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({super.key});
 
   // This widget is the root of your application.
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return MaterialApp(
       title: 'Qiita Search', // titleを追加
       theme: ThemeData(
@@ -27,6 +34,17 @@ class MyApp extends StatelessWidget {
               bodyColor: Colors.white,
             ),
       ),
+      builder: (context, child) {
+        // Providerからstateを取得
+        final progress = ref.watch(progressController);
+        return Stack(
+          children: [
+            child!,
+            // stateの状態に応じて表示/非表示を切り替え
+            if (progress) const Center(child: Loading()),
+          ],
+        );
+      },
       home: const SearchScreen(),
     );
   }

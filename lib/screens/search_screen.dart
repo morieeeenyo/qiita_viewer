@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http; // httpという変数を通して、httpパッケージにアクセス
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:qiita_viewer/controllers/progress_controller.dart';
 import 'package:qiita_viewer/models/article.dart';
-import 'package:qiita_viewer/models/user.dart';
 import 'package:qiita_viewer/widgets/articles_container.dart';
 
-class SearchScreen extends StatefulWidget {
+class SearchScreen extends ConsumerStatefulWidget {
   const SearchScreen({super.key});
 
   @override
-  State<SearchScreen> createState() => _SearchScreenState();
+  ConsumerState<SearchScreen> createState() => _SearchScreenState();
 }
 
-class _SearchScreenState extends State<SearchScreen> {
+class _SearchScreenState extends ConsumerState<SearchScreen> {
   List<Article> articles = []; // 検索結果を格納する変数
   @override
   Widget build(BuildContext context) {
@@ -41,8 +42,18 @@ class _SearchScreenState extends State<SearchScreen> {
                 hintText: '検索ワードを入力してください',
               ),
               onSubmitted: (String value) async {
-                final results = await searchQiita(value);
-                setState(() => articles = results);
+                ref.read(progressController.notifier).excuteWithProgress(
+                  () async {
+                    // 検索結果を取得
+                    final results = await searchQiita(value);
+                    // 状態を更新
+                    setState(
+                      () {
+                        articles = results;
+                      },
+                    );
+                  },
+                );
               },
             ),
           ),
