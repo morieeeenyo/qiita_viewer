@@ -1,0 +1,60 @@
+# ワークフロー名を定義
+name: flutter-ci
+
+# トリガーを定義
+on:
+  # プルリクエスト作成がトリガーとなる（GitHib Actionsが実行される）
+  pull_request:
+    # プルリクエスト作成時とプルリクエストを対象にコミットが行われた時
+    types: [opened, synchronize]
+    # 対象ブランチを指定（masterブランチに対するプルリクエストが対象）
+    branches:
+      - master
+  
+  # GitHubページ上から手動で実行できる
+  workflow_dispatch:
+
+#実行するジョブを定義
+jobs:
+  # ジョブ名を設定
+  flutter-ci:
+
+    # ジョブを実行する仮想ホストマシンタイプ
+    runs-on: ubuntu-latest
+
+    # タイムアウト時間を設定
+    timeout-minutes: 5
+
+    # steps配下に実行したいアクションを定義する。
+    steps:
+      # 当該リポジトリをチェックアウト
+      - name: checkout
+        uses: actions/checkout@v2
+
+      # Flutterをインストール（キャッシュする）
+      - name: flutter cache
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.10.0"
+          channel: "stable"
+          cache: true
+          cache-key: flutter
+          cache-path: ${{ runner.tool_cache }}/flutter
+
+      - name: install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.10.0"
+          channel: "stable"
+
+      # Flutter pub get 実行
+      - name: flutter pub get
+        run: flutter pub get
+      
+      # 性的解析実行
+      - name: flutter analyze
+        run: flutter analyze
+
+      # テスト実行
+      - name: flutter test
+        run: flutter test
