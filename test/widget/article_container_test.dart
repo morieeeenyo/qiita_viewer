@@ -2,8 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:qiita_viewer/models/article.dart';
 import 'package:qiita_viewer/models/user.dart';
+import 'package:qiita_viewer/screens/article_screen.dart';
 import 'package:qiita_viewer/widgets/articles_container.dart';
 import 'package:network_image_mock/network_image_mock.dart';
+import 'package:webview_flutter/webview_flutter.dart';
+import 'package:webview_flutter_android/webview_flutter_android.dart';
+import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 
 void main() {
   group("ArticleContainer", () {
@@ -29,17 +33,32 @@ void main() {
       });
     });
 
-    // testWidgets(
-    //     "Widgetをタップするとurlに遷移すること",
-    //     (WidgetTester tester) => mockNetworkImagesFor(() async {
-    //           await tester.pumpWidget(MaterialApp(
-    //             home: ArticleContainer(
-    //               article: article,
-    //             ),
-    //           ));
-    //           await tester.tap(find.byType(GestureDetector));
-    //           await tester.pumpAndSettle();
-    //           expect(find.byType(ArticleScreen), findsOneWidget);
-    //         }));
+    setUp(() => WebViewPlatform.instance = AndroidWebViewPlatform());
+    testWidgets(
+        "Androidの時WidgetをタップするとArticleScreenが開くこと",
+        (WidgetTester tester) => mockNetworkImagesFor(() async {
+              await tester.pumpWidget(MaterialApp(
+                home: ArticleContainer(
+                  article: article,
+                ),
+              ));
+              await tester.tap(find.byType(GestureDetector));
+              await tester.pumpAndSettle();
+              expect(find.byType(ArticleScreen), findsOneWidget);
+            }));
+
+    setUp(() => WebViewPlatform.instance = WebKitWebViewPlatform());
+    testWidgets(
+        "iOSの時WidgetをタップするとArticleScreenが開くこと",
+        (WidgetTester tester) => mockNetworkImagesFor(() async {
+              await tester.pumpWidget(MaterialApp(
+                home: ArticleContainer(
+                  article: article,
+                ),
+              ));
+              await tester.tap(find.byType(GestureDetector));
+              await tester.pumpAndSettle();
+              expect(find.byType(ArticleScreen), findsOneWidget);
+            }));
   });
 }
