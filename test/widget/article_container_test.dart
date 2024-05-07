@@ -33,10 +33,10 @@ void main() {
       });
     });
 
-    setUp(() => WebViewPlatform.instance = AndroidWebViewPlatform());
     testWidgets(
         "Androidの時WidgetをタップするとArticleScreenが開くこと",
         (WidgetTester tester) => mockNetworkImagesFor(() async {
+              WebViewPlatform.instance = AndroidWebViewPlatform();
               await tester.pumpWidget(MaterialApp(
                 home: ArticleContainer(
                   article: article,
@@ -47,10 +47,10 @@ void main() {
               expect(find.byType(ArticleScreen), findsOneWidget);
             }));
 
-    setUp(() => WebViewPlatform.instance = WebKitWebViewPlatform());
     testWidgets(
         "iOSの時WidgetをタップするとArticleScreenが開くこと",
         (WidgetTester tester) => mockNetworkImagesFor(() async {
+              WebViewPlatform.instance = WebKitWebViewPlatform();
               await tester.pumpWidget(MaterialApp(
                 home: ArticleContainer(
                   article: article,
