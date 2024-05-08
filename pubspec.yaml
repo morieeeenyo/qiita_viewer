@@ -58,6 +58,7 @@ dev_dependencies:
   riverpod_lint: ^2.3.10
   network_image_mock: ^2.1.1
   webview_flutter_android: ^3.16.1
+  webview_flutter_wkwebview: ^3.13.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
