@@ -41,6 +41,7 @@ dependencies:
   flutter_riverpod: ^2.5.1
   riverpod_annotation: ^2.3.5
   webview_flutter: ^4.7.0
+  mockito: ^5.4.4
 
 dev_dependencies:
   flutter_test:
@@ -59,6 +60,7 @@ dev_dependencies:
   network_image_mock: ^2.1.1
   webview_flutter_android: ^3.16.1
   webview_flutter_wkwebview: ^3.13.0
+  source_gen: ^1.5.0
   integration_test:
     sdk: flutter
 
