@@ -5,7 +5,6 @@ import 'package:http/http.dart' as http; // httpという変数を通して、ht
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import 'package:mockito/annotations.dart';
-import 'package:mockito/mockito.dart';
 @GenerateNiceMocks([MockSpec<QiitaRepository>()])
 
 class QiitaRepository {
