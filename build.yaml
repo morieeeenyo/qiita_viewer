@@ -1,0 +1,21 @@
+targets:
+  $default:
+    sources:
+      - $package$
+      - lib/$lib$
+      - lib/**.dart
+      - test/**.dart
+      - integration_test/**.dart
+    builders:
+      source_gen|combining_builder:
+        options:
+          build_extensions:
+            '^lib/{{}}.dart': 'lib/generated/{{}}.g.dart'
+      mockito|mockBuilder:
+        generate_for:
+          - lib/apis/**.dart
+          - lib/models/**.dart
+        options:
+          build_extensions:
+            '^lib/{{}}.dart': 'generated/mocks/{{}}.mocks.dart'
+    
