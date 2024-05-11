@@ -1,23 +1,17 @@
 import 'dart:convert';
 
-import 'package:qiita_viewer/models/article.dart';
 import 'package:http/http.dart' as http; // httpという変数を通して、httpパッケージにアクセス
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:qiita_viewer/apis/qiita_client.dart';
+import 'package:qiita_viewer/models/article.dart';
 
 import 'package:mockito/annotations.dart';
+
 @GenerateNiceMocks([MockSpec<QiitaRepository>()])
-
 class QiitaRepository {
+  static var client = QiitaClient();
   Future<List<Article>> searchArticles(String keyword) async {
-    final uri = Uri.https('qiita.com', '/api/v2/items', {
-      'query': 'title:$keyword',
-      'per_page': '10',
-    });
-
-    final String token = dotenv.env['QIITA_ACCESS_TOKEN'] ?? '';
-
-    final http.Response res = await http.get(uri, headers: {
-      'Authorization': 'Bearer $token',
+    final http.Response res = await client.get("items", {
+      'query': keyword,
     });
 
     if (res.statusCode == 200) {
