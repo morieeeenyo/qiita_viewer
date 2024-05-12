@@ -16,79 +16,75 @@ on:
 
 # 実行するジョブを定義
 jobs:
-  checkout:
-    # ジョブを実行する仮想ホストマシンタイプ
+  analyze:
     runs-on: ubuntu-latest
-
-    # steps配下に実行したいアクションを定義する
+    timeout-minutes: 30
     steps:
-      # 当該リポジトリをチェックアウト
-      - name: checkout
-        uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@v3
 
-  flutter_cache:
-    runs-on: ubuntu-latest
-    needs: checkout
-
-    steps:
-      # Flutterをインストール（キャッシュする）
-      - name: flutter cache
+      - name: Install Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: "3.19.5"
-          channel: "stable"
+          flutter-version: '3.19.5'
+          channel: 'stable'
           cache: true
-          cache-key: flutter
-          cache-path: ${{ runner.tool_cache }}/flutter
 
-  install_flutter:
-    runs-on: ubuntu-latest
-    needs: flutter_cache
+      - name: Run flutter version
+        run: flutter --version
 
-    steps:
-      - name: install Flutter
-        uses: subosito/flutter-action@v2
-        with:
-          flutter-version: "3.19.5"
-          channel: "stable"
-
-  flutter_pub_get:
-    runs-on: ubuntu-latest
-    needs: install_flutter
-
-    steps:
-      - name: Set up Flutter
-        run: echo "${{ runner.tool_cache }}/flutter/bin" >> $GITHUB_PATH
-
-      # Flutter pub get 実行
-      - name: flutter pub get
+      - name: Run flutter pub get
         run: flutter pub get
 
-  create_env:
-    runs-on: ubuntu-latest
-    needs: flutter_pub_get
+      - name: Install matcher
+        run: echo "::add-matcher::.github/analyzer-problem-matcher.json"
 
-    steps:
-      # pubspec.ymlのassetsで指定している.envはGit管理していないのでCI上で別途作成する
-      - name: create .env
+      - name: Run flutter analyze
+        shell: bash
         run: |
-          touch .env
-          echo QIITA_ACCESS_TOKEN=${{secrets.QIITA_ACCESS_TOKEN}} >> .env
+          flutter analyze | tee ./flutter_analyze_report.txt
 
-  flutter_analyze:
+      - name: Remove matcher
+        if: always()
+        run: echo "::remove-matcher owner=dart-analyzer::"
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        if: always()
+        with:
+          ruby-version: '2.7'
+          bundler-cache: true
+
+      - name: Danger
+        uses: MeilCli/danger-action@1996610a4c089e3a79bf3131a70c3c1b311e32f9
+        if: always()
+        with:
+          plugins_file: 'Gemfile'
+          install_path: 'vendor/bundle'
+          danger_file: 'Dangerfile'
+          danger_id: 'danger-pr'
+        env:
+          DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  test:
     runs-on: ubuntu-latest
-    needs: create_env
-
+    timeout-minutes: 30
     steps:
-      # 性的解析実行
-      - name: flutter analyze
-        run: flutter analyze
+      - name: Checkout
+        uses: actions/checkout@v3
 
-  flutter_test:
-    runs-on: ubuntu-latest
-    needs: flutter_analyze
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.5'
+          channel: 'stable'
+          cache: true
 
-    steps:
-      # テスト実行
-      - name: flutter test
+      - name: Run flutter version
+        run: flutter --version
+
+      - name: Run flutter pub get
+        run: flutter pub get
+
+      - name: Run flutter test
         run: flutter test
