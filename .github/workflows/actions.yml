@@ -36,17 +36,8 @@ jobs:
       - name: Run flutter pub get
         run: flutter pub get
 
-      - name: Install matcher
-        run: echo "::add-matcher::.github/analyzer-problem-matcher.json"
-
-      - name: Run flutter analyze
-        shell: bash
-        run: |
-          flutter analyze | tee ./flutter_analyze_report.txt
-
-      - name: Remove matcher
-        if: always()
-        run: echo "::remove-matcher owner=dart-analyzer::"
+      - name: flutter analyze
+        run: flutter analyze > flutter_analyze_report.txt
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
@@ -85,6 +76,12 @@ jobs:
 
       - name: Run flutter pub get
         run: flutter pub get
+
+      # pubspec.ymlのassetsで指定している.envはGit管理していないのでCI上で別途作成する
+      - name: create .env
+        run: |
+          touch .env
+          echo QIITA_ACCESS_TOKEN=${{secrets.QIITA_ACCESS_TOKEN}} >> .env
 
       - name: Run flutter test
         run: flutter test
