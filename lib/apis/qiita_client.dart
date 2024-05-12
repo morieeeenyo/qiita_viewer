@@ -6,7 +6,7 @@ import 'package:mockito/annotations.dart';
 class QiitaClient {
   static const String apiHost = 'qiita.com';
   static const String apiBasePath = '/api/v2';
-  static final token = DotEnv().get('QIITA_API_TOKEN');
+  static final token = dotenv.get('QIITA_ACCESS_TOKEN');
 
   Future<http.Response> get(
       String path, Map<String, dynamic> queryParameters) async {

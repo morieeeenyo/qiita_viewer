@@ -3,11 +3,12 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i3;
+import 'dart:async' as _i4;
 
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:qiita_viewer/apis/qiita_repository.dart' as _i2;
-import 'package:qiita_viewer/models/article.dart' as _i4;
+import 'package:qiita_viewer/apis/qiita_client.dart' as _i2;
+import 'package:qiita_viewer/apis/qiita_repository.dart' as _i3;
+import 'package:qiita_viewer/models/article.dart' as _i5;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -22,19 +23,42 @@ import 'package:qiita_viewer/models/article.dart' as _i4;
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
+class _FakeQiitaClient_0 extends _i1.SmartFake implements _i2.QiitaClient {
+  _FakeQiitaClient_0(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
 /// A class which mocks [QiitaRepository].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockQiitaRepository extends _i1.Mock implements _i2.QiitaRepository {
+class MockQiitaRepository extends _i1.Mock implements _i3.QiitaRepository {
   @override
-  _i3.Future<List<_i4.Article>> searchArticles(String? keyword) =>
+  _i2.QiitaClient get client => (super.noSuchMethod(
+        Invocation.getter(#client),
+        returnValue: _FakeQiitaClient_0(
+          this,
+          Invocation.getter(#client),
+        ),
+        returnValueForMissingStub: _FakeQiitaClient_0(
+          this,
+          Invocation.getter(#client),
+        ),
+      ) as _i2.QiitaClient);
+
+  @override
+  _i4.Future<List<_i5.Article>> searchArticles(String? keyword) =>
       (super.noSuchMethod(
         Invocation.method(
           #searchArticles,
           [keyword],
         ),
-        returnValue: _i3.Future<List<_i4.Article>>.value(<_i4.Article>[]),
+        returnValue: _i4.Future<List<_i5.Article>>.value(<_i5.Article>[]),
         returnValueForMissingStub:
-            _i3.Future<List<_i4.Article>>.value(<_i4.Article>[]),
-      ) as _i3.Future<List<_i4.Article>>);
+            _i4.Future<List<_i5.Article>>.value(<_i5.Article>[]),
+      ) as _i4.Future<List<_i5.Article>>);
 }

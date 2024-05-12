@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:io';
 
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:http/http.dart' as http;
@@ -14,9 +16,9 @@ void main() async {
     late MockQiitaClient mockQiitaClient;
 
     setUp(() {
+      dotenv.testLoad(fileInput: File(".env").readAsStringSync());
       mockQiitaClient = MockQiitaClient();
-      qiitaRepository = QiitaRepository();
-      QiitaRepository.client = mockQiitaClient; // モックを設定
+      qiitaRepository = QiitaRepository(client: mockQiitaClient);
     });
 
     test('API通信が成功し、Articleが取得できること', () async {

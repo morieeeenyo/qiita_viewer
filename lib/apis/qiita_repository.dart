@@ -8,7 +8,9 @@ import 'package:mockito/annotations.dart';
 
 @GenerateNiceMocks([MockSpec<QiitaRepository>()])
 class QiitaRepository {
-  static var client = QiitaClient();
+  late final QiitaClient client;
+  QiitaRepository({QiitaClient? client}) : client = client ?? QiitaClient();
+
   Future<List<Article>> searchArticles(String keyword) async {
     final http.Response res = await client.get("items", {
       'query': keyword,
