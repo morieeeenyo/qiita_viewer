@@ -57,6 +57,9 @@ jobs:
     needs: install_flutter
 
     steps:
+      - name: Set up Flutter
+        run: echo "${{ runner.tool_cache }}/flutter/bin" >> $GITHUB_PATH
+
       # Flutter pub get 実行
       - name: flutter pub get
         run: flutter pub get
