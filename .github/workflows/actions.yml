@@ -14,23 +14,23 @@ on:
   # GitHubページ上から手動で実行できる
   workflow_dispatch:
 
-#実行するジョブを定義
+# 実行するジョブを定義
 jobs:
-  # ジョブ名を設定
-  flutter-ci:
-
+  checkout:
     # ジョブを実行する仮想ホストマシンタイプ
     runs-on: ubuntu-latest
 
-    # タイムアウト時間を設定
-    timeout-minutes: 5
-
-    # steps配下に実行したいアクションを定義する。
+    # steps配下に実行したいアクションを定義する
     steps:
       # 当該リポジトリをチェックアウト
       - name: checkout
         uses: actions/checkout@v2
 
+  flutter_cache:
+    runs-on: ubuntu-latest
+    needs: checkout
+
+    steps:
       # Flutterをインストール（キャッシュする）
       - name: flutter cache
         uses: subosito/flutter-action@v2
@@ -41,26 +41,51 @@ jobs:
           cache-key: flutter
           cache-path: ${{ runner.tool_cache }}/flutter
 
+  install_flutter:
+    runs-on: ubuntu-latest
+    needs: flutter_cache
+
+    steps:
       - name: install Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: "3.19.5"
           channel: "stable"
 
+  flutter_pub_get:
+    runs-on: ubuntu-latest
+    needs: install_flutter
+
+    steps:
       # Flutter pub get 実行
       - name: flutter pub get
         run: flutter pub get
-      
+
+  create_env:
+    runs-on: ubuntu-latest
+    needs: flutter_pub_get
+
+    steps:
       # pubspec.ymlのassetsで指定している.envはGit管理していないのでCI上で別途作成する
       - name: create .env
         run: |
           touch .env
           echo QIITA_ACCESS_TOKEN=${{secrets.QIITA_ACCESS_TOKEN}} >> .env
-      
+
+  flutter_analyze:
+    runs-on: ubuntu-latest
+    needs: create_env
+
+    steps:
       # 性的解析実行
       - name: flutter analyze
         run: flutter analyze
 
+  flutter_test:
+    runs-on: ubuntu-latest
+    needs: flutter_analyze
+
+    steps:
       # テスト実行
       - name: flutter test
         run: flutter test
