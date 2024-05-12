@@ -39,6 +39,10 @@ jobs:
       - name: flutter analyze
         run: flutter analyze > flutter_analyze_report.txt
 
+      - name: Bundler and gem install
+        run: |
+          gem install bundler -v 2.1.4
+
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         if: always()
