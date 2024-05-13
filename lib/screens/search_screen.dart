@@ -44,6 +44,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                   () async {
                     // 検索結果を取得
                     final results = await searchQiitaArticles(value);
+                    print(results);
                     // 状態を更新
                     setState(
                       () {
