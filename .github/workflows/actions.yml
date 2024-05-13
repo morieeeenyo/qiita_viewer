@@ -1,0 +1,94 @@
+# ワークフロー名を定義
+name: flutter-ci
+
+# トリガーを定義
+on:
+  # プルリクエスト作成がトリガーとなる（GitHib Actionsが実行される）
+  pull_request:
+    # プルリクエスト作成時とプルリクエストを対象にコミットが行われた時
+    types: [opened, synchronize]
+    # 対象ブランチを指定（masterブランチに対するプルリクエストが対象）
+    branches:
+      - main
+  
+  # GitHubページ上から手動で実行できる
+  workflow_dispatch:
+
+# 実行するジョブを定義
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0      
+
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.5'
+          channel: 'stable'
+          cache: true
+
+      - name: Run flutter version
+        run: flutter --version
+
+      - name: Run flutter pub get
+        run: flutter pub get
+
+      # pubspec.ymlのassetsで指定している.envはGit管理していないのでCI上で別途作成する
+      - name: create .env
+        run: |
+          touch .env
+          echo QIITA_ACCESS_TOKEN=${{secrets.QIITA_ACCESS_TOKEN}} >> .env
+
+      - name: flutter analyze
+        shell: bash
+        run: flutter analyze | tee ./flutter_analyze_report.txt
+
+      - name: Setup Ruby
+        uses: ruby/setup-ruby@v1
+        if: always()
+        with:
+          ruby-version: '3.3.0'
+          bundler-cache: true
+
+      - name: Danger
+        uses: MeilCli/danger-action@v5
+        if: always()
+        with:
+          plugins_file: 'Gemfile'
+          danger_file: 'Dangerfile'
+          danger_id: 'danger-pr'
+        env:
+          DANGER_GITHUB_API_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.5'
+          channel: 'stable'
+          cache: true
+
+      - name: Run flutter version
+        run: flutter --version
+
+      - name: Run flutter pub get
+        run: flutter pub get
+
+      - name: create .env
+        run: |
+          touch .env
+          echo QIITA_ACCESS_TOKEN=${{secrets.QIITA_ACCESS_TOKEN}} >> .env
+
+      - name: Run flutter test
+        run: flutter test

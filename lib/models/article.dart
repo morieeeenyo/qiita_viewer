@@ -1,5 +1,8 @@
 import 'package:qiita_viewer/models/user.dart';
 
+import 'package:mockito/annotations.dart';
+
+@GenerateNiceMocks([MockSpec<Article>()])
 class Article {
   // コンストラクタ
   Article({
