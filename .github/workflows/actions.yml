@@ -38,6 +38,12 @@ jobs:
       - name: Run flutter pub get
         run: flutter pub get
 
+      # pubspec.ymlのassetsで指定している.envはGit管理していないのでCI上で別途作成する
+      - name: create .env
+        run: |
+          touch .env
+          echo QIITA_ACCESS_TOKEN=${{secrets.QIITA_ACCESS_TOKEN}} >> .env
+
       - name: flutter analyze
         shell: bash
         run: flutter analyze | tee ./flutter_analyze_report.txt
@@ -79,7 +85,6 @@ jobs:
       - name: Run flutter pub get
         run: flutter pub get
 
-      # pubspec.ymlのassetsで指定している.envはGit管理していないのでCI上で別途作成する
       - name: create .env
         run: |
           touch .env
