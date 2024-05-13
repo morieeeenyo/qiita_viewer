@@ -39,7 +39,8 @@ jobs:
         run: flutter pub get
 
       - name: flutter analyze
-        run: flutter analyze > flutter_analyze_report.txt
+        shell: bash
+        run: flutter analyze | tee ./flutter_analyze_report.txt
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
